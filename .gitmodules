@@ -1,0 +1,9 @@
+[submodule "LuaJIT-ImGui"]
+	path = LuaJIT-ImGui
+	url = git@github.com:Simon-L/LuaJIT-ImGui.git
+[submodule "LuaJIT-SDL2"]
+	path = LuaJIT-SDL2
+	url = https://github.com/sonoro1234/LuaJIT-SDL2
+[submodule "LuaJIT-GL"]
+	path = LuaJIT-GL
+	url = https://github.com/sonoro1234/LuaJIT-GL
