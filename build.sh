@@ -1,5 +1,9 @@
 #! /bin/bash
 
+
+INSTALL_PREFIX=${1:-}
+
+
 if [ -z $TOOLCHAIN_SYSROOT ]; then
 	CMAKE_OPTS=""
 	TARGET="native"
@@ -32,8 +36,23 @@ cmake --build build --parallel 16 --verbose
 cmake --build build -t install
 cd ..
 
-echo "package.path = package.path .. \";${BUILD_DIR}/lua/?.lua\"" > ${BUILD_DIR}/minimal_sdl.lua
-cat LuaJIT-ImGui/examples/minimal_sdl.lua >> ${BUILD_DIR}/minimal_sdl.lua
 
-echo "\nBuilt in ${SRC_DIR}, try running:"
-echo "LD_LIBRARY_PATH=$(realpath --relative-to=. ${BUILD_DIR}) luajit $(realpath --relative-to=. ${BUILD_DIR})/minimal_sdl.lua"
+if [ ! -z "$INSTALL_PREFIX" ]
+then
+	echo "Will install to ${INSTALL_PREFIX}"
+	mkdir -p ${INSTALL_PREFIX}/share/lua/5.1/
+	mkdir -p ${INSTALL_PREFIX}/lib/lua/5.1/
+	mv ${BUILD_DIR}/lua/* ${INSTALL_PREFIX}/share/lua/5.1/
+	rm -r ${BUILD_DIR}/lua
+	mv ${BUILD_DIR}/* ${INSTALL_PREFIX}/lib/lua/5.1/
+	echo "Activate with:"
+	echo "source ${INSTALL_PREFIX}/bin/activate"
+	echo "then try by using:"
+	echo "lua minimal_sdl_gl31.lua"
+else
+	echo "package.path = package.path .. \";${BUILD_DIR}/lua/?.lua\"" > ${BUILD_DIR}/minimal_sdl_gl31.lua
+	cat minimal_sdl_gl31.lua >> ${BUILD_DIR}/minimal_sdl_gl31.lua
+	echo "Built in ${SRC_DIR}, try running:"
+	echo "LD_LIBRARY_PATH=$(realpath --relative-to=. ${BUILD_DIR}) luajit $(realpath --relative-to=. ${BUILD_DIR})/minimal_sdl_gl31.lua"
+fi
+
