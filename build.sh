@@ -8,7 +8,7 @@ if [ -z $TOOLCHAIN_SYSROOT ]; then
 	CMAKE_OPTS=""
 	TARGET="native"
 else
-	CMAKE_OPTS="--toolchain ../../cmake-aarch64-libreelec-linux-gnueabi.conf"
+	CMAKE_OPTS="--toolchain ../jelos/cmake-aarch64-libreelec-linux-gnueabi.conf"
 	TARGET="jelos"
 fi
 
