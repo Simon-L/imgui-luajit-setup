@@ -2,3 +2,5 @@ native.*
 jelos.*
 lua.*
 imgui.ini
+host
+pfx
