@@ -31,7 +31,7 @@ cd ..
 
 cd LuaJIT-ImGui
 rm -rf build
-cmake ${CMAKE_OPTS} -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DIMPL_OPENGL3_ES2=yes -DSDL_PATH="" -DLUAJIT_BIN="${BUILD_DIR}/" -Bbuild
+cmake ${CMAKE_OPTS} -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN="${BUILD_DIR}/" -Bbuild
 cmake --build build --parallel 16 --verbose
 cmake --build build -t install
 cd ..

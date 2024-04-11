@@ -10,10 +10,9 @@ local gl, glc, glu, glext = gllib.libraries()
 
 local ig = require"imgui.sdl"
 
-if (sdl.init(sdl.INIT_VIDEO+sdl.INIT_TIMER) ~= 0) then
-
-        print(string.format("Error: %s\n", sdl.getError()));
-        return -1;
+if (sdl.init(sdl.INIT_VIDEO+sdl.INIT_TIMER+sdl.INIT_GAMECONTROLLER) ~= 0) then
+  print(string.format("Error: %s\n", sdl.getError()));
+  return -1;
 end
 
     sdl.gL_SetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE);
@@ -24,7 +23,7 @@ end
     sdl.gL_SetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 1);
     local current = ffi.new("SDL_DisplayMode[1]")
     sdl.getCurrentDisplayMode(0, current);
-    local window = sdl.createWindow("ImGui SDL2+OpenGL3 example", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, 700, 500, sdl.WINDOW_OPENGL+sdl.WINDOW_RESIZABLE); 
+    local window = sdl.createWindow("ImGui SDL2+OpenGL3 example", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, 640, 480, sdl.WINDOW_OPENGL+sdl.WINDOW_RESIZABLE); 
     local gl_context = sdl.gL_CreateContext(window);
     sdl.gL_SetSwapInterval(1); -- Enable vsync
     
@@ -33,6 +32,12 @@ end
     ig_Impl:Init(window, gl_context)
 
     local igio = ig.GetIO()
+    igio.ConfigFlags = ig.lib.ImGuiConfigFlags_NavEnableKeyboard + igio.ConfigFlags 
+    igio.ConfigFlags = ig.lib.ImGuiConfigFlags_NavEnableGamepad + igio.ConfigFlags
+    
+    -- For R36S
+    local remap = "1900c3ea010000000100000001010000,odroidgo3_joypad,a:b1,b:b0,dpdown:b13,dpleft:b14,+lefty:+a1,-leftx:-a0,+leftx:+a0,-lefty:-a1,leftshoulder:b4,leftstick:b16,lefttrigger:b6,dpright:b15,+righty:+a3,-rightx:-a2,+rightx:+a2,-righty:-a3,rightshoulder:b5,rightstick:b10,righttrigger:b7,back:b8,start:b9,dpup:b12,x:b2,y:b3,guide:b11,platform:Linux"
+    local res = sdl.SDL_GameControllerAddMapping(remap)
     
     local done = false;
     local showdemo = ffi.new("bool[1]",true)

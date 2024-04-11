@@ -4,3 +4,6 @@ lua.*
 imgui.ini
 host
 pfx
+Rocknix.*
+host_dir
+target_dir
