@@ -1,5 +1,7 @@
 # Cross-compiling for JELOS/Rocknix
 
+![](./example.jpeg)
+
 Cross-compiling is done using a docker container, running an image containing the JELOS/Rocknix toolchain: https://github.com/Simon-L/jelos-toolchain/
 
 The setup is done in three step:
