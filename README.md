@@ -6,18 +6,18 @@ Cross-compiling is done using a docker container, running an image containing th
 
 The setup is done in three step:
 
-1. Build lua for the host
+1. Build lua and luarocks for the host
 1. Build lua and luarocks for the target into a self-contained environment ready to be deployed to the target.
 1. Install required lua modules using luarocks, taking care of cross-compiling for the target.
 1. Build the imgui lua binding module
 
 ## Build steps
 
-#### 1 - Build lua for the host
+#### 1 - Build lua and luarocks for the host
 ```bash
 docker run --rm -ti -w /build -v $(pwd):/build \
     justenoughlinuxos/jelos-toolchain:RK3326-aarch64 \
-    bash -c 'python ./hererocks/hererocks.py host_dir -j @v2.1 --verbose'
+    bash -c 'python ./hererocks/hererocks.py host_dir -j @v2.1 -rlatest --verbose'
 ```
 
 #### 2 - Build lua and luarocks for the target
@@ -31,7 +31,7 @@ Specifically for JELOS/Rocknix, the target directory is mounted as another volum
 
 #### 3 - Add lua modules using luarocks
 
-We then use the host lua to run luarocks (which is a lua script!) against the target tree. $CC is set in the docker container and used by luarocks for cross-compiling modules for the target arch.
+We then use the host lua to run **the target** luarocks (which is a lua script!) against the target tree. $CC is set in the docker container and used by luarocks for cross-compiling modules for the target arch.
 
 Here is a little suggestion of rocks that rock for everyday lua :) :
 ```bash
@@ -40,7 +40,8 @@ docker run --rm -ti -w /build -v $(pwd):/build -v $(pwd)/target_dir:/storage/tar
     bash -c 'host_dir/bin/lua /storage/target_dir/bin/luarocks --tree "/storage/target_dir" install penlight && \
     host_dir/bin/lua /storage/target_dir/bin/luarocks --tree "/storage/target_dir" install inspect && \
     host_dir/bin/lua /storage/target_dir/bin/luarocks --tree "/storage/target_dir" install luaposix && \
-    wget https://github.com/rxi/json.lua/raw/master/json.lua -O /storage/target_dir/share/lua/5.1/json.lua'
+    host_dir/bin/lua /storage/target_dir/bin/luarocks --tree "/storage/target_dir" install luasocket && \
+    host_dir/bin/lua /storage/target_dir/bin/luarocks --tree "/storage/target_dir" install rxi-json-lua'
 ```
 
 #### 4 - Build the imgui module and its dependencies
@@ -51,3 +52,16 @@ docker run --rm -ti -w /build -v $(pwd):/build -v $(pwd)/target_dir:/storage/tar
 ```
 Copy `minimal_sdl_gl31`.lua to the device and you may then run it directly over SSH for example using:
 `LD_LIBRARY_PATH=/storage/target_dir/lib/lua/5.1/ /storage/target_dir/bin/lua minimal_sdl_gl31.lua`
+
+
+# On a x86_64 host
+The steps are similar, without cross-compiling:
+1. Lua and luarocks: `python ./hererocks/hererocks.py x86_64_dir -j @v2.1 -rlatest --verbose`
+1. Installing required modules:
+```./x86_64_dir/bin/luarocks install penlight && \
+  ./x86_64_dir/bin/luarocks install inspect && \
+  ./x86_64_dir/bin/luarocks install luaposix && \
+  ./x86_64_dir/bin/luarocks install luasocket && \
+  ./x86_64_dir/bin/luarocks install rxi-json-lua
+```
+1. And finally imgui: `bash build_imgui.sh ./x86_64_dir`
