@@ -39,7 +39,8 @@ jobs:
         run: |
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild 
-          cmake --build build --parallel $(nproc) --target install
+          cmake --build build --parallel $(nproc)
+          sudo cmake --build build --parallel $(nproc) --target install
           
       - name: Build imgui for luajit
         run: |
