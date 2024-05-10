@@ -29,9 +29,14 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Set MACOSX_DEPLOYMENT_TARGET
+        if: runner.os == 'macOS'
+        run: |
+          echo 'MACOSX_DEPLOYMENT_TARGET=14.0' >> $GITHUB_ENV
+          
       - name: Build luajit and luarocks
         run: |
-          python ./hererocks/hererocks.py x86_64_dir -jlatest -rlatest --verbose
+          MACOSX_DEPLOYMENT_TARGET=14.0 python ./hererocks/hererocks.py x86_64_dir -jlatest -rlatest --verbose
           ./x86_64_dir/bin/luarocks install inspect
           ./x86_64_dir/bin/luarocks install luaposix
           ./x86_64_dir/bin/luarocks install luasocket
