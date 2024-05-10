@@ -37,6 +37,8 @@ jobs:
 
       - name: Install SDL2
         run: |
+          sudo apt update
+          sudo apt install libgl-dev
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild 
           cmake --build build --parallel $(nproc)
