@@ -34,6 +34,12 @@ jobs:
           ./x86_64_dir/bin/luarocks install luaposix
           ./x86_64_dir/bin/luarocks install luasocket
           ./x86_64_dir/bin/luarocks install rxi-json-lua
+
+      - name: Install SDL2
+        run: |
+          cd LuaJIT-SDL2/SDL &&
+          cmake -Bbuild 
+          cmake --build build --parallel $(nproc) --target install
           
       - name: Build imgui for luajit
         run: |
