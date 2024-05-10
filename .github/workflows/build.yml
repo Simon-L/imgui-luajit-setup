@@ -47,3 +47,17 @@ jobs:
       - name: Build imgui for luajit
         run: |
           bash build_imgui.sh ./x86_64_dir
+
+      - name: Compress install dir
+        run: |
+          tar -C ./x86_64_dir -czvf x86_64_dir.tar.gz .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: x86_64_dir.tar.gz
+          path: ./x86_64_dir.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: x86_64_dir
+          path: ./x86_64_dir/
