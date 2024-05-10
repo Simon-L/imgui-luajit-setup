@@ -18,7 +18,7 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
 
@@ -31,16 +31,20 @@ jobs:
 
       - name: Build luajit and luarocks
         run: |
-          python ./hererocks/hererocks.py x86_64_dir -j @v2.1 -rlatest --verbose
+          python ./hererocks/hererocks.py x86_64_dir -jlatest -rlatest --verbose
           ./x86_64_dir/bin/luarocks install inspect
           ./x86_64_dir/bin/luarocks install luaposix
           ./x86_64_dir/bin/luarocks install luasocket
           ./x86_64_dir/bin/luarocks install rxi-json-lua
 
-      - name: Install SDL2
+      - name: Install libgl
+        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt update
           sudo apt install libgl-dev
+          
+      - name: Install SDL2
+        run: |
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild 
           cmake --build build --parallel $(nproc)
