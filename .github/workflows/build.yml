@@ -18,7 +18,8 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [macos-latest]
+        #os: [ubuntu-latest, windows-latest, macos-latest]
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
 
@@ -36,7 +37,7 @@ jobs:
           
       - name: Build luajit and luarocks
         run: |
-          MACOSX_DEPLOYMENT_TARGET=14.0 python ./hererocks/hererocks.py x86_64_dir -jlatest -rlatest --verbose
+          MACOSX_DEPLOYMENT_TARGET=14.0 python ./hererocks/hererocks.py x86_64_dir -j \@v2.1 -rlatest --verbose
           ./x86_64_dir/bin/luarocks install inspect
           ./x86_64_dir/bin/luarocks install luaposix
           ./x86_64_dir/bin/luarocks install luasocket
