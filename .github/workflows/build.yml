@@ -64,7 +64,6 @@ jobs:
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild 
           cmake --build build --parallel $(nproc)
-          sudo cmake --build build --parallel $(nproc) --target install
           
       - name: Install SDL2
         if: matrix.os != 'windows-latest'
