@@ -58,13 +58,27 @@ jobs:
           sudo apt update
           sudo apt install libgl-dev
           
-      - name: Install SDL2
+      - name: Build SDL2
         shell: bash
         run: |
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild 
           cmake --build build --parallel $(nproc)
           sudo cmake --build build --parallel $(nproc) --target install
+          
+      - name: Install SDL2
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          cd LuaJIT-SDL2/SDL &&
+          sudo cmake --build build --parallel $(nproc) --target install
+          
+      - name: Install SDL2
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          cd LuaJIT-SDL2/SDL &&
+          cmake --build build --parallel $(nproc) --target install
           
       # - name: Build imgui for luajit
       #   run: |
