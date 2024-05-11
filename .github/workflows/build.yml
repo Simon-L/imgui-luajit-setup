@@ -45,10 +45,9 @@ jobs:
           ./x86_64_dir/bin/luarocks install rxi-json-lua
       
       - name: (Windows) Build luajit and luarocks
-        shell: bash
         if: matrix.os == 'windows-latest'
         run: |
-          python ./hererocks/hererocks.py x86_64_dir -j @v2.1 -rlatest --verbose
+          python ./hererocks/hererocks.py x86_64_dir -j `@v2.1 -rlatest --verbose
           ./x86_64_dir/bin/luarocks install inspect
           ./x86_64_dir/bin/luarocks install luasocket
           ./x86_64_dir/bin/luarocks install rxi-json-lua
