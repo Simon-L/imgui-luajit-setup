@@ -19,6 +19,9 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
+        include:
+          - os: windows-latest
+            imgui-dir: lua-imgui-win64
         #os: [ubuntu-latest, windows-latest, macos-latest]
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -79,9 +82,24 @@ jobs:
           cd LuaJIT-SDL2/SDL &&
           cmake --build build --parallel $(nproc) --target install
           
-      # - name: Build imgui for luajit
-      #   run: |
-      #     bash build_imgui.sh ./x86_64_dir
+      - name: Build and install Lua ImGui modules
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          cd LuaJIT-GL
+          cmake -DCMAKE_BUILD_TYPE=Debug -DLUAJIT_BIN="${{ matrix.imgui-dir }}/" -Bbuild
+          cmake --build build --parallel 16 --verbose
+          cmake --build build -t install
+          cd ..
+          cd LuaJIT-SDL2
+          cmake -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DCMAKE_BUILD_TYPE=Debug -DLUAJIT_BIN="${{ matrix.imgui-dir }}/" -Bbuild
+          cmake --build build --parallel 16 --verbose
+          cmake --build build -t install
+          cd ..
+          cd LuaJIT-ImGui
+          cmake -DCMAKE_BUILD_TYPE=Debug -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN="${{ matrix.imgui-dir }}/" -Bbuild
+          cmake --build build --parallel 16 --verbose
+          cmake --build build -t install
 
       - name: Compress install dir
         run: |
@@ -96,3 +114,8 @@ jobs:
         with:
           name: x86_64_dir
           path: ./x86_64_dir/
+          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.imgui-dir }}
+          path: ./${{ matrix.imgui-dir }}/
