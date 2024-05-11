@@ -36,10 +36,20 @@ jobs:
           echo 'MACOSX_DEPLOYMENT_TARGET=14.0' >> $GITHUB_ENV
           
       - name: Build luajit and luarocks
+        if: matrix.os != 'windows-latest'
         run: |
-          python ./hererocks/hererocks.py x86_64_dir -j `@v2.1 -rlatest --verbose
+          python ./hererocks/hererocks.py x86_64_dir -j @v2.1 -rlatest --verbose
           ./x86_64_dir/bin/luarocks install inspect
           ./x86_64_dir/bin/luarocks install luaposix
+          ./x86_64_dir/bin/luarocks install luasocket
+          ./x86_64_dir/bin/luarocks install rxi-json-lua
+      
+      - name: (Windows) Build luajit and luarocks
+        shell: bash
+        if: matrix.os == 'windows-latest'
+        run: |
+          python ./hererocks/hererocks.py x86_64_dir -j @v2.1 -rlatest --verbose
+          ./x86_64_dir/bin/luarocks install inspect
           ./x86_64_dir/bin/luarocks install luasocket
           ./x86_64_dir/bin/luarocks install rxi-json-lua
 
@@ -50,15 +60,16 @@ jobs:
           sudo apt install libgl-dev
           
       - name: Install SDL2
+        shell: bash
         run: |
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild 
           cmake --build build --parallel $(nproc)
           sudo cmake --build build --parallel $(nproc) --target install
           
-      - name: Build imgui for luajit
-        run: |
-          bash build_imgui.sh ./x86_64_dir
+      # - name: Build imgui for luajit
+      #   run: |
+      #     bash build_imgui.sh ./x86_64_dir
 
       - name: Compress install dir
         run: |
