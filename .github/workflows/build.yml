@@ -94,13 +94,13 @@ jobs:
           cmake --build build -t install
           cd ..
           pwd
-          ls
-          echo "Will install to ${INSTALL_PREFIX}"
-          mkdir -p ${INSTALL_PREFIX}/share/lua/5.1/
-          mkdir -p ${INSTALL_PREFIX}/lib/lua/5.1/
-          mv ${BUILD_DIR}/lua/* ${INSTALL_PREFIX}/share/lua/5.1/
-          rm -r ${BUILD_DIR}/lua
-          mv ${BUILD_DIR}/* ${INSTALL_PREFIX}/lib/lua/5.1/
+          ls -la
+          #echo "Will install to ${INSTALL_PREFIX}"
+          #mkdir -p ${INSTALL_PREFIX}/share/lua/5.1/
+          #mkdir -p ${INSTALL_PREFIX}/lib/lua/5.1/
+          #mv ${BUILD_DIR}/lua/* ${INSTALL_PREFIX}/share/lua/5.1/
+          #rm -r ${BUILD_DIR}/lua
+          #mv ${BUILD_DIR}/* ${INSTALL_PREFIX}/lib/lua/5.1/
 
       - name: Compress install dir
         run: |
