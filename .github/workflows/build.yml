@@ -87,7 +87,7 @@ jobs:
           cmake --build build -t install
           cd ..
           cd LuaJIT-ImGui
-          if [[ "$RUNNER_OS" == "Windows" ]]
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
             bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
             bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
           fi
