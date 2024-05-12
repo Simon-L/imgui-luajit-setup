@@ -18,14 +18,14 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
         include:
           - os: windows-latest
             imgui-dir: lua-imgui-win64
-          - os: ubuntu-latest
-            imgui-dir: lua-imgui-ubuntu
-          - os: macos-latest
-            imgui-dir: lua-imgui-macos
+          #- os: ubuntu-latest
+           # imgui-dir: lua-imgui-ubuntu
+          #- os: macos-latest
+           # imgui-dir: lua-imgui-macos
         #os: [ubuntu-latest, windows-latest, macos-latest]
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -73,7 +73,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: bash
         run: |
-          export BUILD_DIR=$(pwd)/${{ matrix.imgui-dir }}
+          export BUILD_DIR=${{ github.workspace }}/${{ matrix.imgui-dir }}
           export INSTALL_PREFIX=$(pwd)/x86_64_dir
           mkdir $BUILD_DIR
           cd LuaJIT-GL
@@ -104,9 +104,9 @@ jobs:
 
       - name: Compress install dir
         run: |
-          tar -C ./${{ matrix.imgui-dir }} -czvf ${{ matrix.imgui-dir }}.tar.gz .
+          tar -C ${{ github.workspace }}/${{ matrix.imgui-dir }} -czvf ${{ github.workspace }}/${{ matrix.imgui-dir }}.tar.gz .
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.imgui-dir }}.tar.gz
-          path: ./${{ matrix.imgui-dir }}.tar.gz
+          path: ${{ github.workspace }}/${{ matrix.imgui-dir }}.tar.gz
