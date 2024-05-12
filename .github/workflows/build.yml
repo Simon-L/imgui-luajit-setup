@@ -18,14 +18,14 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: windows-latest
             imgui-dir: lua-imgui-win64
-          #- os: ubuntu-latest
-           # imgui-dir: lua-imgui-ubuntu
-          #- os: macos-latest
-           # imgui-dir: lua-imgui-macos
+          - os: ubuntu-latest
+            imgui-dir: lua-imgui-ubuntu
+          - os: macos-latest
+            imgui-dir: lua-imgui-macos
         #os: [ubuntu-latest, windows-latest, macos-latest]
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
