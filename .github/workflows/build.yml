@@ -18,10 +18,14 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: windows-latest
             imgui-dir: lua-imgui-win64
+          - os: ubuntu-latest
+            imgui-dir: lua-imgui-ubuntu
+          - os: macos-latest
+            imgui-dir: lua-imgui-macos
         #os: [ubuntu-latest, windows-latest, macos-latest]
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -38,23 +42,6 @@ jobs:
         run: |
           echo 'MACOSX_DEPLOYMENT_TARGET=14.0' >> $GITHUB_ENV
           
-      - name: Build luajit and luarocks
-        if: matrix.os != 'windows-latest'
-        run: |
-          python ./hererocks/hererocks.py x86_64_dir -j @v2.1 -rlatest --verbose
-          ./x86_64_dir/bin/luarocks install inspect
-          ./x86_64_dir/bin/luarocks install luaposix
-          ./x86_64_dir/bin/luarocks install luasocket
-          ./x86_64_dir/bin/luarocks install rxi-json-lua
-      
-      - name: (Windows) Build luajit and luarocks
-        if: matrix.os == 'windows-latest'
-        run: |
-          python ./hererocks/hererocks.py x86_64_dir --target vs -j `@v2.1 -rlatest --verbose
-          ./x86_64_dir/bin/luarocks install inspect
-          ./x86_64_dir/bin/luarocks install luasocket
-          ./x86_64_dir/bin/luarocks install rxi-json-lua
-
       - name: Install libgl
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -107,13 +94,6 @@ jobs:
           cmake --build build -t install
           cd ..
           pwd
-          pwd
-          pwd
-          pwd
-          ls
-          ls
-          ls
-          ls
           ls
           echo "Will install to ${INSTALL_PREFIX}"
           mkdir -p ${INSTALL_PREFIX}/share/lua/5.1/
@@ -124,19 +104,9 @@ jobs:
 
       - name: Compress install dir
         run: |
-          tar -C ./x86_64_dir -czvf x86_64_dir.tar.gz .
+          tar -C ./${{ matrix.imgui-dir }} -czvf ${{ matrix.imgui-dir }}.tar.gz .
 
       - uses: actions/upload-artifact@v4
         with:
-          name: x86_64_dir.tar.gz
-          path: ./x86_64_dir.tar.gz
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: x86_64_dir
-          path: ./x86_64_dir/
-          
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.imgui-dir }}
-          path: ./${{ matrix.imgui-dir }}/
+          name: ${{ matrix.imgui-dir }}.tar.gz
+          path: ./${{ matrix.imgui-dir }}.tar.gz
