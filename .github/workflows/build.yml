@@ -87,8 +87,10 @@ jobs:
           cmake --build build -t install
           cd ..
           cd LuaJIT-ImGui
-          bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
-          bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+          if [[ "$RUNNER_OS" == "Windows" ]]
+            bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+            bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+          fi
           cmake -DCMAKE_BUILD_TYPE=Debug -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -Bbuild
           cmake --build build --parallel 16 --verbose
           cmake --build build -t install
