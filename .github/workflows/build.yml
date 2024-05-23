@@ -52,22 +52,22 @@ jobs:
         shell: bash
         run: |
           cd LuaJIT-SDL2/SDL &&
-          cmake -Bbuild 
-          cmake --build build --parallel $(nproc)
+          cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release --parallel $(nproc)
           
       - name: Install SDL2
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           cd LuaJIT-SDL2/SDL &&
-          sudo cmake --build build --parallel $(nproc) --target install
+          sudo cmake --build build --config Release --parallel $(nproc) --target install
           
       - name: Install SDL2
         if: matrix.os == 'windows-latest'
         shell: bash
         run: |
           cd LuaJIT-SDL2/SDL &&
-          cmake --build build --parallel $(nproc) --target install
+          cmake --build build --config Release --parallel $(nproc) --target install
           
       - name: Build and install Lua ImGui modules
         #if: matrix.os == 'windows-latest'
@@ -82,9 +82,9 @@ jobs:
           cmake --build build -t install
           cd ..
           cd LuaJIT-SDL2
-          cmake -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -Bbuild
-          cmake --build build --parallel 16 --verbose
-          cmake --build build -t install
+          cmake -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild 
+          cmake --build build --config Release --parallel 16 --verbose
+          cmake --build build --config Release -t install
           cd ..
           cd LuaJIT-ImGui
           if [[ "$RUNNER_OS" == "Windows" ]]; then
