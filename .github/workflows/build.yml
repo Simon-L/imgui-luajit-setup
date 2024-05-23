@@ -77,9 +77,9 @@ jobs:
           export INSTALL_PREFIX=${{ github.workspace }}/${{ matrix.os }}_dir
           mkdir '${{ github.workspace }}/${{ matrix.imgui-dir }}'
           cd LuaJIT-GL
-          cmake -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -Bbuild
-          cmake --build build --parallel 16 --verbose
-          cmake --build build -t install
+          cmake -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild
+          cmake --build build --config Release  --parallel 16 --verbose
+          cmake --build build --config Release  -t install
           cd ..
           cd LuaJIT-SDL2
           cmake -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild 
@@ -91,9 +91,9 @@ jobs:
             bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
             bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
           fi
-          cmake -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -Bbuild
-          cmake --build build --parallel 16 --verbose
-          cmake --build build -t install
+          cmake -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild
+          cmake --build build --config Release --parallel 16 --verbose
+          cmake --build build --config Release -t install
           cd ..
           pwd
           ls -la
