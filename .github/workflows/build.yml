@@ -110,5 +110,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.imgui-dir }}.tar.gz
-          path: ${{ github.workspace }}/${{ matrix.imgui-dir }}.tar.gz
+          name: ${{ matrix.imgui-dir }}
+          path: ${{ github.workspace }}/${{ matrix.imgui-dir }}/
