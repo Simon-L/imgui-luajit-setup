@@ -40,7 +40,7 @@ jobs:
       - name: Set MACOSX_DEPLOYMENT_TARGET
         if: runner.os == 'macOS'
         run: |
-          echo 'MACOSX_DEPLOYMENT_TARGET=14.0' >> $GITHUB_ENV
+          echo 'MACOSX_DEPLOYMENT_TARGET=13.0' >> $GITHUB_ENV
           
       - name: Install libgl
         if: matrix.os == 'ubuntu-latest'
