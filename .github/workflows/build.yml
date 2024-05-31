@@ -70,8 +70,8 @@ jobs:
         shell: bash
         run: |
           export MACOSX_DEPLOYMENT_TARGET='13.0'
-          export BUILD_DIR=$(pwd)/mybuild2
-          cd LuaJIT-SDL2/SDL &&
+          export BUILD_DIR=$(pwd)/lua-imgui-macos
+          cd LuaJIT-SDL2/SDL
           cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
           cmake --build build --config Release --parallel $(nproc)
           sudo cmake --build build --config Release --parallel $(nproc) --target install
@@ -91,6 +91,7 @@ jobs:
           cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN=${BUILD_DIR} -DCMAKE_BUILD_TYPE=Release -Bbuild
           cmake --build build --config Release --parallel 16 --verbose
           cmake --build build --config Release -t install
+          
       # - name: Build and install Lua ImGui modules
         #if: matrix.os == 'windows-latest'
         # shell: bash
