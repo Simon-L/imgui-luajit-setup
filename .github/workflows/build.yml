@@ -34,72 +34,96 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Set MACOSX_DEPLOYMENT_TARGET
-        if: runner.os == 'macOS'
-        run: |
-          echo 'MACOSX_DEPLOYMENT_TARGET=13.0' >> $GITHUB_ENV
+      # - name: Set MACOSX_DEPLOYMENT_TARGET
+      #   if: runner.os == 'macOS'
+      #   run: |
+      #     echo 'MACOSX_DEPLOYMENT_TARGET=13.0' >> $GITHUB_ENV
+      # 
+      # - name: Install libgl
+      #   if: matrix.os == 'ubuntu-latest'
+      #   run: |
+      #     sudo apt update
+      #     sudo apt install libgl-dev
+      # 
+      # - name: Build SDL2
+      #   shell: bash
+      #   run: |
+      #     cd LuaJIT-SDL2/SDL &&
+      #     cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
+      #     cmake --build build --config Release --parallel $(nproc)
+      # 
+      # - name: Install SDL2
+      #   if: matrix.os != 'windows-latest'
+      #   shell: bash
+      #   run: |
+      #     cd LuaJIT-SDL2/SDL &&
+      #     sudo cmake --build build --config Release --parallel $(nproc) --target install
+      # 
+      # - name: Install SDL2
+      #   if: matrix.os == 'windows-latest'
+      #   shell: bash
+      #   run: |
+      #     cd LuaJIT-SDL2/SDL &&
+      #     cmake --build build --config Release --parallel $(nproc) --target install
           
-      - name: Install libgl
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt update
-          sudo apt install libgl-dev
-          
-      - name: Build SDL2
+      - name: Build and install Lua ImGui modules
         shell: bash
         run: |
+          export MACOSX_DEPLOYMENT_TARGET='13.0'
+          export BUILD_DIR=$(pwd)/mybuild2
           cd LuaJIT-SDL2/SDL &&
           cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
           cmake --build build --config Release --parallel $(nproc)
-          
-      - name: Install SDL2
-        if: matrix.os != 'windows-latest'
-        shell: bash
-        run: |
-          cd LuaJIT-SDL2/SDL &&
           sudo cmake --build build --config Release --parallel $(nproc) --target install
-          
-      - name: Install SDL2
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        run: |
-          cd LuaJIT-SDL2/SDL &&
-          cmake --build build --config Release --parallel $(nproc) --target install
-          
-      - name: Build and install Lua ImGui modules
-        #if: matrix.os == 'windows-latest'
-        shell: bash
-        run: |
-          export BUILD_DIR='${{ github.workspace }}/${{ matrix.imgui-dir }}'
-          export INSTALL_PREFIX=${{ github.workspace }}/${{ matrix.os }}_dir
-          mkdir '${{ github.workspace }}/${{ matrix.imgui-dir }}'
+          mkdir ${BUILD_DIR}
           cd LuaJIT-GL
-          cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild
+          cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DLUAJIT_BIN=${BUILD_DIR} -DCMAKE_BUILD_TYPE=Release -Bbuild
           cmake --build build --config Release  --parallel 16 --verbose
           cmake --build build --config Release  -t install
           cd ..
           cd LuaJIT-SDL2
-          cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild 
+          cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DLUAJIT_BIN=${BUILD_DIR} -DCMAKE_BUILD_TYPE=Release -Bbuild 
           cmake --build build --config Release --parallel 16 --verbose
           cmake --build build --config Release -t install
           cd ..
           cd LuaJIT-ImGui
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
-            bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
-          fi
-          cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild
+          cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN=${BUILD_DIR} -DCMAKE_BUILD_TYPE=Release -Bbuild
           cmake --build build --config Release --parallel 16 --verbose
           cmake --build build --config Release -t install
-          cd ..
-          pwd
-          ls -la
-          #echo "Will install to ${INSTALL_PREFIX}"
-          #mkdir -p ${INSTALL_PREFIX}/share/lua/5.1/
-          #mkdir -p ${INSTALL_PREFIX}/lib/lua/5.1/
-          #mv ${BUILD_DIR}/lua/* ${INSTALL_PREFIX}/share/lua/5.1/
-          #rm -r ${BUILD_DIR}/lua
-          #mv ${BUILD_DIR}/* ${INSTALL_PREFIX}/lib/lua/5.1/
+      # - name: Build and install Lua ImGui modules
+        #if: matrix.os == 'windows-latest'
+        # shell: bash
+        # run: |
+        #   export BUILD_DIR='${{ github.workspace }}/${{ matrix.imgui-dir }}'
+        #   export INSTALL_PREFIX=${{ github.workspace }}/${{ matrix.os }}_dir
+        #   mkdir '${{ github.workspace }}/${{ matrix.imgui-dir }}'
+        #   cd LuaJIT-GL
+        #   cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild
+        #   cmake --build build --config Release  --parallel 16 --verbose
+        #   cmake --build build --config Release  -t install
+        #   cd ..
+        #   cd LuaJIT-SDL2
+        #   cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DSDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1 -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild 
+        #   cmake --build build --config Release --parallel 16 --verbose
+        #   cmake --build build --config Release -t install
+        #   cd ..
+        #   cd LuaJIT-ImGui
+        #   if [[ "$RUNNER_OS" == "Windows" ]]; then
+        #     bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+        #     bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+        #   fi
+        #   cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN='${{ github.workspace }}/${{ matrix.imgui-dir }}' -DCMAKE_BUILD_TYPE=Release -Bbuild
+        #   cmake --build build --config Release --parallel 16 --verbose
+        #   cmake --build build --config Release -t install
+        #   cd ..
+        #   pwd
+        #   ls -la
+        #   #echo "Will install to ${INSTALL_PREFIX}"
+        #   #mkdir -p ${INSTALL_PREFIX}/share/lua/5.1/
+        #   #mkdir -p ${INSTALL_PREFIX}/lib/lua/5.1/
+        #   #mv ${BUILD_DIR}/lua/* ${INSTALL_PREFIX}/share/lua/5.1/
+        #   #rm -r ${BUILD_DIR}/lua
+        #   #mv ${BUILD_DIR}/* ${INSTALL_PREFIX}/lib/lua/5.1/
 
       - name: Compress install dir
         run: |
