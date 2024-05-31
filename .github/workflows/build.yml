@@ -39,11 +39,11 @@ jobs:
       #   run: |
       #     echo 'MACOSX_DEPLOYMENT_TARGET=13.0' >> $GITHUB_ENV
       # 
-      # - name: Install libgl
-      #   if: matrix.os == 'ubuntu-latest'
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install libgl-dev
+      - name: Install libgl
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install libgl-dev
       # 
       # - name: Build SDL2
       #   shell: bash
@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: |
           export MACOSX_DEPLOYMENT_TARGET='13.0'
-          export BUILD_DIR=$(pwd)/lua-imgui-macos
+          export BUILD_DIR=$(pwd)/${{ matrix.imgui-dir }}
           cd LuaJIT-SDL2/SDL
           cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
           cmake --build build --config Release --parallel $(nproc)
