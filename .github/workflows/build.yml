@@ -15,7 +15,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-linux:
+  build:
     strategy:
       matrix:
         # os: [macos-13]
@@ -78,7 +78,11 @@ jobs:
           cd LuaJIT-SDL2/SDL
           cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
           cmake --build build --config Release --parallel $(nproc)
-          sudo cmake --build build --config Release --parallel $(nproc) --target install
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            cmake --build build --config Release --parallel $(nproc) --target install
+          else
+            sudo cmake --build build --config Release --parallel $(nproc) --target install
+          fi
           cd ../..
           mkdir ${BUILD_DIR}
           cd LuaJIT-GL
