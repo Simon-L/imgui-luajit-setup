@@ -1,24 +1,18 @@
-# This is a basic workflow to help you get started with Actions
 
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     strategy:
       matrix:
-        # os: [macos-13]
         os: [macos-13, ubuntu-22.04, windows-latest]
         include:
           - os: macos-13
@@ -27,48 +21,18 @@ jobs:
             imgui-dir: lua-imgui-ubuntu
           - os: windows-latest
             imgui-dir: lua-imgui-windows
-        #os: [ubuntu-latest, windows-latest, macos-latest]
-    # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # - name: Set MACOSX_DEPLOYMENT_TARGET
-      #   if: runner.os == 'macOS'
-      #   run: |
-      #     echo 'MACOSX_DEPLOYMENT_TARGET=13.0' >> $GITHUB_ENV
-      # 
       - name: Install libgl
         if: matrix.os == 'ubuntu-22.04'
         run: |
           sudo apt update
           sudo apt install libgl-dev
-      # 
-      # - name: Build SDL2
-      #   shell: bash
-      #   run: |
-      #     cd LuaJIT-SDL2/SDL &&
-      #     cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
-      #     cmake --build build --config Release --parallel $(nproc)
-      # 
-      # - name: Install SDL2
-      #   if: matrix.os != 'windows-latest'
-      #   shell: bash
-      #   run: |
-      #     cd LuaJIT-SDL2/SDL &&
-      #     sudo cmake --build build --config Release --parallel $(nproc) --target install
-      # 
-      # - name: Install SDL2
-      #   if: matrix.os == 'windows-latest'
-      #   shell: bash
-      #   run: |
-      #     cd LuaJIT-SDL2/SDL &&
-      #     cmake --build build --config Release --parallel $(nproc) --target install
           
       - name: Build and install Lua ImGui modules
         shell: bash
@@ -139,9 +103,9 @@ jobs:
         #   #rm -r ${BUILD_DIR}/lua
         #   #mv ${BUILD_DIR}/* ${INSTALL_PREFIX}/lib/lua/5.1/
 
-      - name: Compress install dir
-        run: |
-          tar -C ${{ github.workspace }}/${{ matrix.imgui-dir }} -czvf ${{ github.workspace }}/${{ matrix.imgui-dir }}.tar.gz .
+      # - name: Compress install dir
+      #   run: |
+      #     tar -C ${{ github.workspace }}/${{ matrix.imgui-dir }} -czvf ${{ github.workspace }}/${{ matrix.imgui-dir }}.tar.gz .
       
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
