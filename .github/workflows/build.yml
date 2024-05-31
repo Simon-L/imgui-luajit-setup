@@ -96,6 +96,10 @@ jobs:
           cmake --build build --config Release -t install
           cd ..
           cd LuaJIT-ImGui
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            bash -c "sed 's/abs(a.x/fabs(a.x/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+            bash -c "sed 's/abs(a.y/fabs(a.y/g' -i cimnodes_r/ImNodes/ImNodes.cpp"
+          fi
           cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DCMAKE_CXX_STANDARD=11 -DIMPL_GLFW=no -DIMPL_SDL=yes -DIMPL_OPENGL2=no -DIMPL_OPENGL3=yes -DSDL_PATH="" -DLUAJIT_BIN=${BUILD_DIR} -DCMAKE_BUILD_TYPE=Release -Bbuild
           cmake --build build --config Release --parallel 16 --verbose
           cmake --build build --config Release -t install
