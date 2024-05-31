@@ -75,6 +75,7 @@ jobs:
           cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0"
           cmake --build build --config Release --parallel $(nproc)
           sudo cmake --build build --config Release --parallel $(nproc) --target install
+          cd ../..
           mkdir ${BUILD_DIR}
           cd LuaJIT-GL
           cmake -DCMAKE_OSX_DEPLOYMENT_TARGET="13.0" -DLUAJIT_BIN=${BUILD_DIR} -DCMAKE_BUILD_TYPE=Release -Bbuild
