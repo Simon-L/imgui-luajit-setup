@@ -131,8 +131,8 @@ jobs:
         run: |
           tar -C ${{ github.workspace }}/${{ matrix.imgui-dir }} -czvf ${{ github.workspace }}/${{ matrix.imgui-dir }}.tar.gz .
       
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
         
       - uses: actions/upload-artifact@v4
         with:
